@@ -1,0 +1,11 @@
+<div class="puzzle-container">    
+    <table class="table">
+        <tr class="row" *ngFor="let row of puzzle">
+            <ng-container *ngFor="let column of row.columns">
+                <td class={{column.tile}} (click)="clickTile(column.x, column.y)"></td>
+            </ng-container>
+        </tr>
+    </table>
+    <div><p>{{message}}</p></div>
+    <div><button (click)="newGame();">New Game</button><button (click)="resetPuzzle();">reset</button></div>
+</div>
