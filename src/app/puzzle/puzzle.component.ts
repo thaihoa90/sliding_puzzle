@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
+interface Tile {
+  id: number;
+  x: number;
+  y: number;
+  tile: string;
+}
+
 @Component({
   selector: 'app-puzzle',
   templateUrl: './puzzle.component.html',
@@ -7,11 +14,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PuzzleComponent implements OnInit {
 
-  private col: number = 4;
-  private row: number = 4;
-
-  private emptyTileX = 3;
-  private emptyTileY = 3;
+  private emptyTileX: number;
+  private emptyTileY: number;
 
   private complete: boolean;
   
@@ -28,7 +32,7 @@ export class PuzzleComponent implements OnInit {
   /**
    * Reset puzzle
    */
-  public resetPuzzle() {
+  public resetPuzzle(): void {
     this.emptyTileX = 3;
     this.emptyTileY = 3;
 
@@ -129,7 +133,7 @@ export class PuzzleComponent implements OnInit {
   /**
    * Start a new game
    */
-  public newGame() {
+  public newGame(): void {
     this.resetPuzzle();
     this.complete = false;
 
@@ -142,7 +146,7 @@ export class PuzzleComponent implements OnInit {
    * @param x x coordinate of the tile
    * @param y y coordinate of the tile
    */
-  public clickTile(x: number, y: number) {
+  public clickTile(x: number, y: number): void {
     if(this.complete) return;
 
     this.moveTile(x, y);
@@ -157,7 +161,7 @@ export class PuzzleComponent implements OnInit {
    * Generate a random number between 0 and max-1
    * @param max 
    */
-  private randomNumber(max: number) {
+  private randomNumber(max: number): number {
     return Math.floor(Math.random() * Math.floor(max))
   }
 
@@ -166,7 +170,7 @@ export class PuzzleComponent implements OnInit {
    * @param x x coordinate of the tile
    * @param y y coordinate of the tile
    */
-  private getAdjacentTile(x: number, y: number) {
+  private getAdjacentTileCoordinate(x: number, y: number): { x: number, y: number}[] {
     if (x === 3 && y === 3) return [{ x: 2, y: 3 }, { x: 3, y: 2 }];
     if (x === 0 && y === 0) return [{ x: 1, y: 0 }, { x: 0, y: 1 }];
     if (x === 0 && y === 3) return [{ x: 1, y: 3 }, { x: 0, y: 2 }];
@@ -182,13 +186,13 @@ export class PuzzleComponent implements OnInit {
    * Shuffle tiles around
    * @param steps number of times a tile will be moved
    */
-  private shuffle(steps: number) {
-    let previousX, previousY;
+  private shuffle(steps: number): void {
+    let previousX: number, previousY: number;
     for (let i = 0; i < steps; i++) {
 
-      let options: any[] = this.getAdjacentTile(this.emptyTileX, this.emptyTileY)
+      let options: any[] = this.getAdjacentTileCoordinate(this.emptyTileX, this.emptyTileY)
       if (!options) return;
-      let index = this.randomNumber(options.length)
+      let index: number = this.randomNumber(options.length)
 
       if (options[index].x === previousX && options[index].y === previousY) {
         options.splice(index, 1);
@@ -207,11 +211,11 @@ export class PuzzleComponent implements OnInit {
    * @param x x coordinate of the tile
    * @param y y coordinate of the tile
    */
-  private moveTile(x: number, y: number) {
+  private moveTile(x: number, y: number): void {
 
     if (this.allowedToMove(x, y)) {
-      let tile = this.puzzle[y].columns[x]
-      let emptyTile = this.puzzle[this.emptyTileY].columns[this.emptyTileX];
+      let tile: Tile = this.puzzle[y].columns[x]
+      let emptyTile: Tile = this.puzzle[this.emptyTileY].columns[this.emptyTileX];
 
       tile.x = emptyTile.x;
       tile.y = emptyTile.y;
@@ -234,7 +238,7 @@ export class PuzzleComponent implements OnInit {
    * @param x x coordinate of the tile
    * @param y y coordinate of the tile
    */
-  private allowedToMove(x: number, y: number) {
+  private allowedToMove(x: number, y: number): boolean {
     if (x + 1 === this.emptyTileX && y === this.emptyTileY) return true;
     if (x - 1 === this.emptyTileX && y === this.emptyTileY) return true;
     if (x === this.emptyTileX && y + 1 === this.emptyTileY) return true;
@@ -245,8 +249,8 @@ export class PuzzleComponent implements OnInit {
   /**
    * Check if puzzle has been completed
    */
-  private checkPuzzleCompletion() {
-    let counter = 0;
+  private checkPuzzleCompletion(): boolean {
+    let counter: number = 0;
     for (let row of this.puzzle) {
       for (let column of row.columns) {
         if (column.id !== counter) return false;
