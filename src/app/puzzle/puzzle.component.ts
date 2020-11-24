@@ -20,7 +20,7 @@ export class PuzzleComponent implements OnInit {
   private complete: boolean;
   
   public message: string;
-  public puzzle: any[] = [];
+  public puzzle: any[];
 
   constructor() {
     this.resetPuzzle()
